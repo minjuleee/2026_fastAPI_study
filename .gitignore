@@ -1,0 +1,271 @@
+# ==========================================
+# Python
+# ==========================================
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# C extensions
+*.so
+
+# Distribution / Packaging
+.Python
+build/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ==========================================
+# Virtual Environment
+# ==========================================
+
+venv/
+env/
+ENV/
+.venv/
+venv-*/
+.python-version
+
+# ==========================================
+# Environment Variables / Secrets
+# ==========================================
+
+.env
+.env.*
+!.env.example
+
+secrets.json
+config.secret.json
+openai_key.txt
+apikey.txt
+*.pem
+*.key
+
+# ==========================================
+# macOS / Mac Intel
+# ==========================================
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# macOS resource fork
+._*
+
+# Finder thumbnails
+Icon?
+
+# Spotlight / Trash
+.Spotlight-V100
+.Trashes
+
+# Network share files
+.fseventsd
+.TemporaryItems
+
+# ==========================================
+# FastAPI / Uvicorn
+# ==========================================
+
+logs/
+*.log
+uvicorn.log
+gunicorn.log
+
+# ==========================================
+# Database
+# ==========================================
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Alembic cache
+alembic/versions/*.pyc
+alembic/versions/__pycache__/
+
+# ==========================================
+# Test / Coverage
+# ==========================================
+
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+
+# ==========================================
+# Jupyter Notebook
+# ==========================================
+
+.ipynb_checkpoints/
+
+# ==========================================
+# VSCode
+# ==========================================
+
+.vscode/
+
+# 공유하고 싶은 설정이 있으면 아래처럼 예외 처리
+# !.vscode/settings.json
+# !.vscode/extensions.json
+
+# ==========================================
+# PyCharm / IntelliJ
+# ==========================================
+
+.idea/
+
+# ==========================================
+# OS Files
+# ==========================================
+
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# Upload / Temporary Files
+# ==========================================
+
+uploads/
+upload/
+media/
+temp/
+tmp/
+
+# ==========================================
+# Audio / Video Files
+# ==========================================
+
+*.wav
+*.mp3
+*.m4a
+*.flac
+
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+
+# ==========================================
+# Image Files
+# ==========================================
+# 주의: 프로젝트에 필요한 샘플 이미지를 올릴 거면 이 부분은 빼야 함
+
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+
+# README용 이미지나 예시 이미지를 올리고 싶으면 예외 처리 가능
+# !docs/images/
+# !docs/images/*.png
+# !assets/
+# !assets/*.png
+
+# ==========================================
+# Generated AI Results
+# ==========================================
+
+outputs/
+results/
+generated/
+runs/
+
+# ==========================================
+# YOLO / Ultralytics
+# ==========================================
+
+runs/detect/
+runs/train/
+runs/segment/
+runs/classify/
+
+*.pt
+*.onnx
+*.engine
+*.tflite
+
+# 단, 직접 학습한 모델을 GitHub에 올릴 거면 아래 예외 사용 가능
+# !models/best.pt
+
+# ==========================================
+# AI Model / Cache
+# ==========================================
+
+.cache/
+.cache-loader/
+
+# HuggingFace
+.huggingface/
+hf_cache/
+huggingface_cache/
+
+# Transformers
+transformers_cache/
+
+# Torch
+.torch/
+torch_cache/
+
+# TensorFlow / Keras
+.keras/
+*.h5
+*.keras
+saved_model/
+checkpoints/
+
+# ==========================================
+# ChromaDB / Vector DB
+# ==========================================
+
+chroma_db/
+chromadb/
+vector_store/
+vectordb/
+
+# 너 프로젝트에서 쓰는 Chroma 경로
+vector_store/ai_tutor_chroma/
+
+# ==========================================
+# LangChain / LangGraph
+# ==========================================
+
+.langchain/
+langgraph_checkpoints/
+
+# ==========================================
+# Runtime
+# ==========================================
+
+*.pid
+*.seed
+*.out
+
+# ==========================================
+# Backup Files
+# ==========================================
+
+*.bak
+*.backup
+*.old
+*.swp
+*.swo
