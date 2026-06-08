@@ -29,7 +29,7 @@ from pydantic import BaseModel, Field     # 요청 데이터와 응답 데이터
 # - 값이 있을 수도 있고 없을 수도 있음을 의미합니다.
 # - 예: Optional[str]은 문자열이거나 None일 수 있습니다.
 from typing import List, Optional        # 데이터를 여러 개 담을 수 있는 컬렉션 객체
-from schemas.books_schema import BookCreate
+from schemas.books_schema import BookCreate, BookResponse
 
 # FastAPI 객체 생성 
 app = FastAPI(
@@ -66,7 +66,20 @@ def health_check() :
   # 딕셔너리를 FastAPI가 자동으로 json으로 반환한다
   return {"status" : "ok", "version" : "1.0.0"}
 
-# 도서등록
+# 도서등록 (POST /books)
+@app.post("/books", response_model=BookResponse, status_code=201, tags=["도서"])
+def create_book(book:BookCreate) :
+  """
+  도서를 등록 합니다.
+  status_code=201 : 생성 성공을 의미하는 HTTP 코드
+  """
+  global next_id
+  # Pydantic 객체를 딕셔너리로 변환후 펼쳐주는 함수
+  record = {"id" : next_id, **book.model_dump()}
+
+  books_db[next_id] = record  # 딕셔너리에 record 추가
+  next_id += 1
+  return record
 
 # 도서검색
 
