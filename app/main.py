@@ -29,7 +29,7 @@ from pydantic import BaseModel, Field     # 요청 데이터와 응답 데이터
 # - 값이 있을 수도 있고 없을 수도 있음을 의미합니다.
 # - 예: Optional[str]은 문자열이거나 None일 수 있습니다.
 from typing import List, Optional        # 데이터를 여러 개 담을 수 있는 컬렉션 객체
-from schemas.books_schema import BookCreate, BookResponse
+from schemas.books_schema import BookCreate, BookResponse, BookUpdate
 
 # FastAPI 객체 생성 
 app = FastAPI(
@@ -64,6 +64,7 @@ def health_check() :
   # 딕셔너리를 FastAPI가 자동으로 json으로 반환한다
   return {"status" : "ok", "version" : "1.0.0"}
 
+
 # 도서등록 (POST /books)
 @app.post("/books", response_model=BookResponse, status_code=201, tags=["도서"])
 def create_book(book:BookCreate) :
@@ -78,6 +79,7 @@ def create_book(book:BookCreate) :
   books_db[next_id] = record  # 딕셔너리에 record 추가
   next_id += 1
   return record
+
 
 # 도서검색 (전체 도서목록, 개별 도서 검색)
 # 전체도서 검색 (GET /books)
@@ -100,6 +102,7 @@ def get_books(
   
   return items
 
+
 # 개별도서 검색 (GET /books/{book_id}) - books_id : unique한 도서의 번호
 @app.get("/books/{book_id}", response_model=BookResponse, tags=["도서"])
 def get_book(
@@ -119,7 +122,27 @@ def get_book(
   return books_db[book_id]
 
 
-# 도서수정
+# 도서수정 (PUT /books/{book_id})
+@app.put("/books/{book_id}", response_model=BookResponse, tags=["도서"])
+def update_book(book_id:int, update:BookUpdate) :
+  """
+  도서 정보를 수정합니다.
+  변경할 필드만 보내도 됩니다. (나머지는 원래 값 유지됨)
+  예 : {"price" : 200000} -> 가격만 변경 
+  """
+  if book_id not in books_db :
+    raise HTTPException(
+      status_code=404,  # not found
+      detail=f"도서 {book_id}번을 찾을 수 없습니다",
+    )
+  # exclude_none=True " None"인 필드 제외
+  changes = update.model_dump(exclude_none=True)
+  
+  # 딕셔너리의 모든 키를 순회하며 값을 변경
+  for k, v in changes.items() : 
+    books_db[book_id][k] = v    # book_id번 책의 k필드의 값을 v로 변경
+  
+  return books_db[book_id]
 
 # 도서삭제
 
