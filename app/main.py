@@ -29,7 +29,7 @@ from pydantic import BaseModel, Field     # 요청 데이터와 응답 데이터
 # - 값이 있을 수도 있고 없을 수도 있음을 의미합니다.
 # - 예: Optional[str]은 문자열이거나 None일 수 있습니다.
 from typing import List, Optional        # 데이터를 여러 개 담을 수 있는 컬렉션 객체
-from ..schemas.books_schema import BookCreate
+from schemas.books_schema import BookCreate
 
 # FastAPI 객체 생성 
 app = FastAPI(
@@ -46,7 +46,7 @@ next_id = 1
 # --------------------------------------
 # 서버 상태 확인용 API
 # --------------------------------------
-@app.get("/health", summary="서버 상태 확인", tags=["시스템", "건강"])
+@app.get("/health", summary="서버 상태 확인", tags=["시스템"])
 def health_check() :
   """
   서버가 정상적으로 실행 중인지 확인하는 API입니다.
@@ -66,5 +66,11 @@ def health_check() :
   # 딕셔너리를 FastAPI가 자동으로 json으로 반환한다
   return {"status" : "ok", "version" : "1.0.0"}
 
+# 도서등록
 
+# 도서검색
+
+# 도서수정
+
+# 도서삭제
 
