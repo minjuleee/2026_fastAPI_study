@@ -47,4 +47,4 @@ class SentimentReviewResponse(BaseModel):
   score:     float  # 0.0 ~ 1.0
   reason:    str    # 판단 근거
 
-  
+
