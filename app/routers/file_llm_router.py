@@ -7,7 +7,7 @@ from fastapi import UploadFile, File, Form, HTTPException
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 import json
 
-from app.schemas.image_llm import ImageAnlaysisResponse, TextSummaryResponse, ImageAnalysisForm
+from app.schemas.file_llm import ImageAnlaysisResponse, TextSummaryResponse, ImageAnalysisForm
 from app.services.file_analyze_service import validate_image, analyze_image_with_llm
 
 image_llm_router = APIRouter(prefix="/imagellm", tags=["LLM"])
