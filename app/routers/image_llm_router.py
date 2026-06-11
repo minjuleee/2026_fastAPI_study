@@ -4,9 +4,11 @@
 #       Client에게 응답을 반환한다.
 from fastapi import APIRouter
 from fastapi import UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 import json
 
-from app.schemas.image_llm import ImageAnlaysisResponse, TextSummaryResponse, Depends, ImageAnlysisForm
+from app.schemas.image_llm import ImageAnlaysisResponse, TextSummaryResponse, ImageAnalysisForm
+from app.services.file_analyze_service import validate_image, analyze_image_with_llm
 
 image_llm_router = APIRouter(prefix="/imagellm", tags=["LLM"])
 
@@ -24,7 +26,7 @@ image_llm_router = APIRouter(prefix="/imagellm", tags=["LLM"])
 async def analyze_image(
   # Form 파라미터를 라우터에 직접 작성 - 파라미터가 많으면 시그니처가 길어져서 코드가 지저분해짐
   file:UploadFile = File(...),
-  form: ImageAnlysisForm = Depends(),   # 나머지 텍스트 데이터
+  form: ImageAnalysisForm = Depends(),   # 나머지 텍스트 데이터
 ) :
   """
   이미지를 업로드하면 GPT-4o Vision이 설명을 생성합니다.
@@ -34,4 +36,16 @@ async def analyze_image(
   - `language`: 출력 언어 ko/en
   """
   contents = await file.read()    # 파일 읽기
-  validate_image(file.content_type, len(contents))
+  validate_image(file.content_type, len(contents))  # 검증
+  
+  result = await analyze_image_with_llm(contents, form.prompt, form.language)
+  
+  return ImageAnlaysisResponse (
+    filename = file.filename,
+    size_bytes = len(contents),
+    description = result.get("description", ""),   # 이미지 전체 설명
+    objects = result.get("objects", []),           # 탐지된 객체 목록,
+    mood = result.get("mood", ""), 
+  )
+  
+  
