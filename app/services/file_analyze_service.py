@@ -4,6 +4,8 @@
 import base64, asyncio, json
 from fastapi import HTTPException
 
+from app.services.llm_service import get_llm_client, LLM_TIMEOUT, _call_with_timeout
+
 MAX_IMAGE_SIZE = 10 * 1024 * 1024   # 10MB
 MAX_TEXT_SIZE = 1 * 1024 * 1024     # 1MB
 
@@ -11,6 +13,7 @@ LLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/jpg"}
 ALLOWED_TEXT_TYPES  = {"text/plain", "application/octet-stream"}
 
 LANG_MAP = {"ko": "한국어", "en": "English"}
+
 
 def validate_image(content_type:str, size:int) : 
   """
@@ -30,4 +33,49 @@ def validate_image(content_type:str, size:int) :
       status_code=413,
       detail=f"이미지사이즈가 0이거나,  이미지 사이즈가 오버됩니다. 이미지 최대 10MB. 현재: {size:,} bytes"
     )
-  return True
+  
+  
+async def analyze_image_with_llm(
+  contents:bytes,
+  prompt:str, 
+  language:str,
+) -> dict :
+  """
+  이미지를 Base64로 인코딩해 Vision API에 전달합니다.
+  {"description": ..., "objects": [...], "mood": ...} 반환
+  """
+  client = get_llm_client()
+  lang = LANG_MAP.get(language, "한국어")
+  b64 = base64.b64encode(contents).decode("UTF-8")
+  
+  full_prompt = (
+    f"{prompt}\n"
+    f"반드시 {lang}로 출력하세요.\n"
+    '아래 JSON 형식으로만 반환하세요:\n'
+    '{"description":"...","objects":["..."],"mood":"..."}'
+  )
+
+  async def _call() :
+    response = await client.chat.completions.create(
+      model="gpt-4o",
+      messages=[{"role": "user", "content": [
+        {
+          "type": "image_url",
+          "image_url": {"url": f"data:image/jpeg;base64,{b64}"}
+        },
+        {"type": "text", "text": full_prompt},
+      ]}],
+      response_format={"type": "json_object"},
+      max_tokens=500,
+    )
+    return response.choices[0].message.content
+  
+  try :
+    raw = await _call_with_timeout(_call(), timeout=60)
+    return json.loads(raw)
+  except json.JSONDecodeError as e:
+    raise HTTPException(502, detail="JSON 파싱 실패")
+  
+  
+
+  
