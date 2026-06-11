@@ -6,11 +6,14 @@ from fastapi import APIRouter
 from fastapi import UploadFile, File, Form, HTTPException
 import json
 
-from app.schemas.image_llm import ImageAnlaysisResponse, TextSummaryResponse
+from app.schemas.image_llm import ImageAnlaysisResponse, TextSummaryResponse, Depends, ImageAnlysisForm
 
 image_llm_router = APIRouter(prefix="/imagellm", tags=["LLM"])
 
 # "/imagellm/analyze_image"
+# 파일 + 텍스트 함께 받기
+# JSON Body와 File은 함께 쓸수가 없다
+# Form : 나머지 텍스트 데이터를 받는.. (form)
 @image_llm_router.post(
   "/analyze_image",
   response_model=ImageAnlaysisResponse,
@@ -18,3 +21,17 @@ image_llm_router = APIRouter(prefix="/imagellm", tags=["LLM"])
   tags=["LLM 이미지분석"],
   summary="이미지 설명 생성(Vision Model API 이용)"
 )
+async def analyze_image(
+  # Form 파라미터를 라우터에 직접 작성 - 파라미터가 많으면 시그니처가 길어져서 코드가 지저분해짐
+  file:UploadFile = File(...),
+  form: ImageAnlysisForm = Depends(),   # 나머지 텍스트 데이터
+) :
+  """
+  이미지를 업로드하면 GPT-4o Vision이 설명을 생성합니다.
+
+  Form 파라미터:
+  - `prompt`  : 분석 지시 (기본값 제공)
+  - `language`: 출력 언어 ko/en
+  """
+  contents = await file.read()    # 파일 읽기
+  validate_image(file.content_type, len(contents))
